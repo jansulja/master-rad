@@ -1,9 +1,5 @@
 package com.uns.ftn.master.e2.app.security.authorization.utils;
 
-import static com.uns.ftn.master.e2.app.security.authorization.component.ibac.IpBasedAccessLock.ibacBuilder;
-import static com.uns.ftn.master.e2.app.security.authorization.component.ibac.IpRange.builder;
-import static com.uns.ftn.master.e2.app.security.authorization.component.rbac.RoleBasedAccessLock.rbacBuilder;
-import static com.uns.ftn.master.e2.app.security.authorization.component.tbac.TimeBasedAccessLock.tbacBuilder;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.substringAfter;
@@ -12,7 +8,10 @@ import static org.apache.commons.lang3.StringUtils.substringBefore;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.uns.ftn.master.e2.app.security.authorization.component.ibac.IpBasedAccessLock;
 import com.uns.ftn.master.e2.app.security.authorization.component.ibac.IpRange;
+import com.uns.ftn.master.e2.app.security.authorization.component.rbac.RoleBasedAccessLock;
+import com.uns.ftn.master.e2.app.security.authorization.component.tbac.TimeBasedAccessLock;
 import com.uns.ftn.master.e2.app.security.authorization.lock.AccessLock;
 
 public class AccessLockUtils {
@@ -23,7 +22,7 @@ public class AccessLockUtils {
 
 	public static AccessLock rbac(String... roles) {
 		
-		return rbacBuilder()
+		return RoleBasedAccessLock.rbacBuilder()
 				.roles(asList(roles).stream()
 						.map(r -> "ROLE_" + r)
 						.collect(toList()))
@@ -33,7 +32,7 @@ public class AccessLockUtils {
 	
 	public static AccessLock tbac() {
 		
-		return tbacBuilder()
+		return TimeBasedAccessLock.tbacBuilder()
 				.build();
 		
 	} 
@@ -41,12 +40,12 @@ public class AccessLockUtils {
 	public static AccessLock ibac(String... ipRanges) {
 
 		List<IpRange> ipRangesList = Stream.of(ipRanges)
-				.map(r -> builder().startIpAddress(substringBefore(r, "-"))
+				.map(r -> IpRange.builder().startIpAddress(substringBefore(r, "-"))
 						.endIpAddress(substringAfter(r, "-"))
 						.build())
 				.collect(toList());
 
-		return ibacBuilder().ipRanges(ipRangesList)
+		return IpBasedAccessLock.ibacBuilder().ipRanges(ipRangesList)
 				.build();
 	}
 	
