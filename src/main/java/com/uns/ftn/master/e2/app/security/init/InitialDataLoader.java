@@ -1,6 +1,5 @@
 package com.uns.ftn.master.e2.app.security.init;
 
-import static com.uns.ftn.master.e2.app.security.domain.CompoundAccessTicket.builder;
 import static java.util.Arrays.asList;
 
 import java.time.LocalTime;
@@ -16,6 +15,7 @@ import com.uns.ftn.master.e2.app.security.authorization.component.rbac.RoleBased
 import com.uns.ftn.master.e2.app.security.authorization.component.tbac.TimeBasedAccessTicket;
 import com.uns.ftn.master.e2.app.security.dao.UserRepository;
 import com.uns.ftn.master.e2.app.security.domain.AccessTicket;
+import com.uns.ftn.master.e2.app.security.domain.CompoundAccessTicket;
 import com.uns.ftn.master.e2.app.security.domain.User;
 
 @Component
@@ -52,10 +52,10 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		user.setPassword(passwordEncoder.encode("admin"));
 		user.setEmail("admin@admin.com");
 
-		user.setCompoundAccessTickets(asList(builder().accessTicket(rbac1)
-				.subTicket(builder().accessTicket(ibac1).build())
-				.subTicket(builder().accessTicket(tbac1).build())
-				.subTicket(builder().accessTicket(tbac2).build()).build()));
+		user.setCompoundAccessTickets(asList(CompoundAccessTicket.builder().accessTicket(rbac1)
+				.subTicket(CompoundAccessTicket.builder().accessTicket(ibac1).build())
+				.subTicket(CompoundAccessTicket.builder().accessTicket(tbac1).build())
+				.subTicket(CompoundAccessTicket.builder().accessTicket(tbac2).build()).build()));
 
 		userRepository.save(user);
 
@@ -65,7 +65,7 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		user.setLastName("user");
 		user.setPassword(passwordEncoder.encode("user"));
 		user.setEmail("user@user.com");
-		user.setCompoundAccessTickets(asList(builder().accessTicket(rbac2).build()));
+		user.setCompoundAccessTickets(asList(CompoundAccessTicket.builder().accessTicket(rbac2).build()));
 
 		userRepository.save(user);
 
