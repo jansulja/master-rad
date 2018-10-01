@@ -4,11 +4,13 @@ import java.util.Collection;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -29,9 +31,10 @@ public class User {
     private String lastName;
     private String email;
     private String password;
-        
+    
     @JsonIgnore
-    @ManyToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-    private Collection<AccessTicket> accessTickets;
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @ManyToMany(cascade=CascadeType.ALL)
+    private Collection<CompoundAccessTicket> compoundAccessTickets;
     
 }

@@ -1,5 +1,6 @@
 package com.uns.ftn.master.e2.app.security.service;
 
+import static com.uns.ftn.master.e2.app.security.utils.CompoundAccessTicketUtils.extractAccessTickets;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 
@@ -29,20 +30,19 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) {
 		
-		User u = userRepository.findByEmail(username);
-		if(nonNull(u)) {
+		User user = userRepository.findByEmail(username);
+		if(nonNull(user)) {
 			
-			List<RoleBasedAccessTicket> roles = u.getAccessTickets()
-					.stream()
-					.filter(p -> p instanceof RoleBasedAccessTicket)
-					.map(p -> (RoleBasedAccessTicket)p)
+			List<RoleBasedAccessTicket> roles = extractAccessTickets(user.getCompoundAccessTickets()).stream()
+					.filter(RoleBasedAccessTicket.class::isInstance)
+					.map(RoleBasedAccessTicket.class::cast)
 					.collect(toList());
 			
 			Collection<? extends GrantedAuthority> auth = roles.stream()
 					.map(r -> new SimpleGrantedAuthority(r.getName()))
 					.collect(toList());
 			
-			return new org.springframework.security.core.userdetails.User(username, u.getPassword(), auth);
+			return new org.springframework.security.core.userdetails.User(username, user.getPassword(), auth);
 		}else {
 			throw new UsernameNotFoundException("Bad credentials.");
 		}

@@ -1,7 +1,9 @@
 package com.uns.ftn.master.e2.app.security.init;
 
+import static com.uns.ftn.master.e2.app.security.domain.CompoundAccessTicket.builder;
+import static java.util.Arrays.asList;
+
 import java.time.LocalTime;
-import java.util.Arrays;
 
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -49,7 +51,11 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		user.setLastName("admin");
 		user.setPassword(passwordEncoder.encode("admin"));
 		user.setEmail("admin@admin.com");
-		user.setAccessTickets(Arrays.asList(rbac1, tbac1, ibac1, tbac2));
+
+		user.setCompoundAccessTickets(asList(builder().accessTicket(rbac1)
+				.subTicket(builder().accessTicket(ibac1).build())
+				.subTicket(builder().accessTicket(tbac1).build())
+				.subTicket(builder().accessTicket(tbac2).build()).build()));
 
 		userRepository.save(user);
 
@@ -59,7 +65,7 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		user.setLastName("user");
 		user.setPassword(passwordEncoder.encode("user"));
 		user.setEmail("user@user.com");
-		user.setAccessTickets(Arrays.asList(rbac2));
+		user.setCompoundAccessTickets(asList(builder().accessTicket(rbac2).build()));
 
 		userRepository.save(user);
 

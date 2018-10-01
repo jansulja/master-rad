@@ -1,10 +1,11 @@
 package com.uns.ftn.master.e2.app.security.service.impl;
 
+import static com.uns.ftn.master.e2.app.security.utils.CompoundAccessTicketUtils.extractAccessTickets;
 import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -25,12 +26,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public <T> List<T> getAccessTicketsByType(Class<T> clazz, User user) {
 		
-		return user.getAccessTickets()
-				.stream()
-				.filter(clazz::isInstance)
-				.map(clazz::cast)
-				.collect(Collectors.toList());
-		
+		return extractAccessTickets(user.getCompoundAccessTickets()).stream()
+			.filter(clazz::isInstance)
+			.map(clazz::cast).collect(toList());
+	
 	}
 	
 	@Override
